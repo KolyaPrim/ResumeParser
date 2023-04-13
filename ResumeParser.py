@@ -34,8 +34,9 @@ class ResumeParser:
 
             if self.save_path:
                 for file_name, json_data in json_list:
+                    file_name = re.sub('\.[A-z0-9]+', '', file_name) + '.json'
                     path = os.path.join(self.save_path, file_name)
-                    Et.save_json(path=path, json_data=str(json_data))
+                    Et.save_json(path=path, json_data=json_data)
             return json_list
 
         elif os.path.isfile(self.path):
@@ -43,8 +44,9 @@ class ResumeParser:
             json_data = self._get_parsed_data(text=text)
 
             if self.save_path:
-                path = os.path.join(self.save_path, self.path.split('/')[-1])
-                Et.save_json(path=path, json_data=str(json_data))
+                file_name = re.sub('\.[A-z0-9]+','',self.path.split('/')[-1]) + '.json'
+                path = os.path.join(self.save_path, file_name)
+                Et.save_json(path=path, json_data=json_data)
 
             return json_data
 
@@ -143,7 +145,7 @@ class ResumeParser:
                 'period': job_period_list[index].replace('\n', ''),
                 'time': time_period,
                 'position': position,
-                'description': description,
+                'description': description
             }
         work_experience_dict['job_experience'] = job_experience
         return work_experience_dict
