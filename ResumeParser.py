@@ -1,23 +1,17 @@
-import json
 import os
+import re
 from pathlib import Path
 from pprint import pprint
 from typing import List, Dict, Tuple, Text
 
-from tools import ExternalTools as Et
 from tools import Constants
-
-from dateutil.parser import parse
-import re
-
-# pip install python-dateutil
+from tools import ExternalTools as Et
 
 BASE_DIR = Path(__file__).resolve().parent
 
 REGEX_FOR_AGE = r'[0-9]+ лет'
 
 
-# parse(text_rows[1],fuzzy_with_tokens=True)
 class ResumeParser:
     def __init__(self, path: str, save_path: str = None):
         """
@@ -25,7 +19,6 @@ class ResumeParser:
         :param path: Path to folder or file.
         :param save_path:Path for save file.
         """
-
         self.path = path
         self.save_path = save_path
 
@@ -35,7 +28,7 @@ class ResumeParser:
             json_list = []
             for file in filename_list:
                 file_path = os.path.join(self.path, file)
-                text = self._get_text_from_file(file_path=file_path)
+                text = Et.get_text_from_file(file_path=file_path)
                 current_json = self._get_parsed_data(text=text)
                 json_list.append((file, current_json))
 
@@ -106,12 +99,53 @@ class ResumeParser:
 
     @staticmethod
     def _get_position_and_salary(text) -> Dict:
+
         position_and_salary_dict = {}
+
+        list_keys = ['title', 'salary', 'employments', 'schedules']
+
+        for index, key in enumerate(list_keys):
+            try:
+                position_and_salary_dict[key] = re.findall(Constants.LIST_POSITION_AND_SALARY_REGEX[index], text)[0]
+            except:
+                pass
         return position_and_salary_dict
 
     @staticmethod
     def _get_work_experience(text) -> Dict:
         work_experience_dict = {}
+        text
+        list_keys = ['total_experience']
+        for index, key in enumerate(list_keys):
+            try:
+                work_experience_dict[key] = re.findall(Constants.LIST_POSITION_AND_SALARY_REGEX[index], text)[0]
+            except:
+                pass
+        text = re.sub(r'[——](.+)\n', '', text).strip()
+
+        job_period_list = re.findall(Constants.REGEX_FOR_JOB_EXPERIENCE, text)
+        job_experience_list = re.split(Constants.REGEX_FOR_JOB_EXPERIENCE, text)
+        job_experience_list = list(filter(None, job_experience_list))
+        job_experience = {}
+
+        for index, job in enumerate(job_experience_list):
+            time_period = re.findall(Constants.REGEX_FOR_JOB_PERIOD, job)[0]
+
+            start_index_job_about = text.index(time_period) + len(time_period)
+            job_about = text[start_index_job_about:].split('\n')
+            job_about = list(filter(None, job_about))
+
+            firm_name = job_about[0]
+            position = job_about[1]
+            description = ' '.join(job_about[2:])
+
+            job_experience[firm_name] = {
+                'period': job_period_list[index].replace('\n', ''),
+                'time': time_period,
+                'position': position,
+                'description': description,
+            }
+        work_experience_dict['job_experience'] = job_experience
         return work_experience_dict
 
     @staticmethod

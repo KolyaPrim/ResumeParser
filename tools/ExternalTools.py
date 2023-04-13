@@ -85,6 +85,7 @@ def read_rtf(path: str) -> str:
     """
     with open(path, "r") as file:
         rtf_text = rtf_to_text(file.read())
+    rtf_text = rtf_text.replace('|', '')
     return rtf_text
 
 
