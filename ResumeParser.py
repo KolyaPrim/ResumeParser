@@ -12,6 +12,25 @@ BASE_DIR = Path(__file__).resolve().parent
 REGEX_FOR_AGE = r'[0-9]+ лет'
 
 
+def get_list_year_education(text) -> Tuple[List, List]:
+    list_year = re.findall(Constants.REGEX_FOR_YEAR_EDUCATION, text)
+    list_year = list(filter(None, list_year))
+    list_year_index = [text.index(year) for year in list_year]
+    count_years = len(list_year_index)
+
+    list_year_description = []
+    for i in range(count_years):
+        start_index = list_year_index[i]
+        if i == count_years - 1:
+            list_year_description.append(text[start_index:])
+        else:
+            end_index = list_year_index[i + 1]
+            list_year_description.append(text[start_index:end_index])
+
+    list_year_description = list(filter(None, list_year_description))
+    return list_year, list_year_description
+
+
 class ResumeParser:
     def __init__(self, path: str, save_path: str = None):
         """
@@ -44,7 +63,7 @@ class ResumeParser:
             json_data = self._get_parsed_data(text=text)
 
             if self.save_path:
-                file_name = re.sub('\.[A-z0-9]+','',self.path.split('/')[-1]) + '.json'
+                file_name = re.sub('\.[A-z0-9]+', '', self.path.split('/')[-1]) + '.json'
                 path = os.path.join(self.save_path, file_name)
                 Et.save_json(path=path, json_data=json_data)
 
@@ -120,7 +139,7 @@ class ResumeParser:
         list_keys = ['total_experience']
         for index, key in enumerate(list_keys):
             try:
-                work_experience_dict[key] = re.findall(Constants.LIST_POSITION_AND_SALARY_REGEX[index], text)[0]
+                work_experience_dict[key] = re.findall(Constants.LIST_WORK_EXPERIENCE_REGEX[index], text)[0]
             except:
                 pass
         text = re.sub(r'[——](.+)\n', '', text).strip()
@@ -153,11 +172,39 @@ class ResumeParser:
     @staticmethod
     def _get_education(text) -> Dict:
         education_dict = {}
+
+        list_level_education = re.findall(Constants.REGEX_FOR_LEVEL_EDUCATION, text)
+        list_education = re.split(Constants.REGEX_FOR_LEVEL_EDUCATION, text)
+        list_education = list(filter(None, list_education))
+
+        for index, description in enumerate(list_education):
+            description = description.strip()
+
+            list_year, list_year_description = get_list_year_education(text=description)
+
+            education_dict[list_level_education[index]] = {}
+            for index_year, description_year in enumerate(list_year_description):
+                education_dict[list_level_education[index]].update({list_year[index_year]: {
+                    'institution': re.match(Constants.REGEX_FOR_DESCRIPTION_EDUCATION, description_year).group(1),
+                    'description': re.match(Constants.REGEX_FOR_DESCRIPTION_EDUCATION, description_year).group(3)
+                }})
+
         return education_dict
 
     @staticmethod
     def _get_additional_education(text) -> Dict:
         additional_education_dict = {}
+
+        text = text.strip()
+
+        list_year, list_year_description = get_list_year_education(text=text)
+
+        for index_year, description_year in enumerate(list_year_description):
+            additional_education_dict[list_year[index_year]] = {
+                'institution': re.match(Constants.REGEX_FOR_DESCRIPTION_EDUCATION, description_year).group(1),
+                'description': re.match(Constants.REGEX_FOR_DESCRIPTION_EDUCATION, description_year).group(3)
+            }
+
         return additional_education_dict
 
     @staticmethod
@@ -176,6 +223,7 @@ class ResumeParser:
         return additional_info_dict
 
     def _run_parse_text(self, field, text) -> Dict:
+        text = text.strip()
         match field:
             case 'personal_info':
                 return self._get_personal_info(text=text)
@@ -202,3 +250,8 @@ class ResumeParser:
             json_data[key] = self._run_parse_text(field=key, text=value)
 
         return json_data
+
+
+parser = ResumeParser(path="fastfile", save_path="results")
+parsed_json = parser.run()
+# pprint(parsed_json)
