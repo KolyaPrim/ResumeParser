@@ -51,7 +51,7 @@ This module return a json object or list of json object that look like this:
     "birth_year": "1970",
     "phone": "+7 (999) 8883344",
     "mail": "vasilev1970@mymail.com",
-    "sity": "Владивосток"
+    "city": "Владивосток"
   },
   "position_and_salary": {
     "title": "Программист разработчик",
