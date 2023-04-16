@@ -2,7 +2,7 @@
 
 ---
 
-### How use it ?
+### How to use it?
 
 You can run it from console and throw an argument `path` and `save_path`
 
@@ -43,43 +43,43 @@ This module return a json object or list of json object that look like this:
 ```json
 {
   "personal_info": {
-    "name": "Васильев Вася",
-    "last_name": "Васильев",
-    "first_name": "Вася",
-    "gender": "Мужчина",
+    "name": "Р’Р°СЃРёР»СЊРµРІ Р’Р°СЃСЏ",
+    "last_name": "Р’Р°СЃРёР»СЊРµРІ",
+    "first_name": "Р’Р°СЃСЏ",
+    "gender": "РњСѓР¶С‡РёРЅР°",
     "age": "53",
     "birth_year": "1970",
     "phone": "+7 (999) 8883344",
     "mail": "vasilev1970@mymail.com",
-    "city": "Владивосток"
+    "city": "Р’Р»Р°РґРёРІРѕСЃС‚РѕРє"
   },
   "position_and_salary": {
-    "title": "Программист разработчик",
+    "title": "РџСЂРѕРіСЂР°РјРјРёСЃС‚ СЂР°Р·СЂР°Р±РѕС‚С‡РёРє",
     "salary": "100500",
-    "employments": "полная занятость",
-    "schedules": "полный день"
+    "employments": "РїРѕР»РЅР°СЏ Р·Р°РЅСЏС‚РѕСЃС‚СЊ",
+    "schedules": "РїРѕР»РЅС‹Р№ РґРµРЅСЊ"
   },
   "education": {
-    "Высшее": {
+    "Р’С‹СЃС€РµРµ": {
       "2022": {
-        "institution": "Наилучший универсистет мира для программистов",
-        "description": "Программирование на всех языках мира"
+        "institution": "РќР°РёР»СѓС‡С€РёР№ СѓРЅРёРІРµСЂСЃРёСЃС‚РµС‚ РјРёСЂР° РґР»СЏ РїСЂРѕРіСЂР°РјРјРёСЃС‚РѕРІ",
+        "description": "РџСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёРµ РЅР° РІСЃРµС… СЏР·С‹РєР°С… РјРёСЂР°"
       },
       "2014": {
-        "institution": "Колледж для программистов",
-        "description": "Языки программирования"
+        "institution": "РљРѕР»Р»РµРґР¶ РґР»СЏ РїСЂРѕРіСЂР°РјРјРёСЃС‚РѕРІ",
+        "description": "РЇР·С‹РєРё РїСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёСЏ"
       }
     }
   },
   "additional_education": {
     "2020": {
-      "institution": "Курс повышения квалификации javascript разработчика",
-      "description": "Как создавать переменные"
+      "institution": "РљСѓСЂСЃ РїРѕРІС‹С€РµРЅРёСЏ РєРІР°Р»РёС„РёРєР°С†РёРё javascript СЂР°Р·СЂР°Р±РѕС‚С‡РёРєР°",
+      "description": "РљР°Рє СЃРѕР·РґР°РІР°С‚СЊ РїРµСЂРµРјРµРЅРЅС‹Рµ"
     }
   },
   "skill_set": {
-    "language": "Русский — Родной\nАнглийский  — A1 — Начальный\n",
-    "skills": "Упорство и слабоумие"
+    "language": "Р СѓСЃСЃРєРёР№ вЂ” Р РѕРґРЅРѕР№\nРђРЅРіР»РёР№СЃРєРёР№  вЂ” A1 вЂ” РќР°С‡Р°Р»СЊРЅС‹Р№\n",
+    "skills": "РЈРїРѕСЂСЃС‚РІРѕ Рё СЃР»Р°Р±РѕСѓРјРёРµ"
   },
   "driver_experience": {
     "driver_license_types": [
@@ -88,7 +88,7 @@ This module return a json object or list of json object that look like this:
     "has_vehicle": true
   },
   "additional_info": {
-    "about": "Всё время хочу пить кофе, есть и спать"
+    "about": "Р’СЃС‘ РІСЂРµРјСЏ С…РѕС‡Сѓ РїРёС‚СЊ РєРѕС„Рµ, РµСЃС‚СЊ Рё СЃРїР°С‚СЊ"
   }
 }
 ```
@@ -101,7 +101,7 @@ Field       |  Type  |       What is it mean       | Possible values         |
 name        | string |          Full name          ||
 last_name   | string |          Last name          ||
 first_name  | string |         First name          ||
-gender      | string |           Gender            | `Мужчина`, `Женщина`    |
+gender      | string |           Gender            | `РњСѓР¶С‡РёРЅР°`, `Р–РµРЅС‰РёРЅР°`    |
 age         | string |             Age             |                         |
 birth_year  | string |     Just year of birth      ||
 phone       | string | Phone number for contact    | `"+7 (999) 8883344"`    |
