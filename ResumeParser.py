@@ -210,16 +210,34 @@ class ResumeParser:
     @staticmethod
     def _get_skill_set(text) -> Dict:
         skill_set_dict = {}
+
+        list_keys = ['language', 'skills']
+
+        for index, key in enumerate(list_keys):
+            try:
+                skill_set_dict[key] = re.findall(Constants.LIST_SKILL_SET_REGEX[index], text)[0]
+            except:
+                pass
+
         return skill_set_dict
 
     @staticmethod
     def _get_driver_experience(text) -> Dict:
         driver_experience_dict = {}
+
+        driver_license_types = re.findall(Constants.REGEX_FOR_DRIVE_LICENSE_TYPES, text)[0]
+        driver_experience_dict['driver_license_types'] = driver_license_types.strip().split(',')
+
+        driver_experience_dict['has_vehicle'] = bool(re.match(Constants.REGEX_FOR_DRIVE_VEHICLE, text))
+
         return driver_experience_dict
 
     @staticmethod
     def _get_additional_info(text) -> Dict:
-        additional_info_dict = {}
+        additional_info_dict = {
+            'about': re.match(Constants.REGEX_FOR_ADDITIONAL_INFO, text).group(1).strip()
+        }
+
         return additional_info_dict
 
     def _run_parse_text(self, field, text) -> Dict:

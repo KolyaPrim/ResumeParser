@@ -1,6 +1,6 @@
 STOP_WORDS = [
     "Желаемая должность и зарплата",
-    "Опыт работы",
+    "Опыт работы -",
     "Образование",
     "Повышение квалификации, курсы",
     "Ключевые навыки",
@@ -10,7 +10,7 @@ STOP_WORDS = [
 
 STOP_WORDS_MAPING = {
     "Желаемая должность и зарплата": "position_and_salary",
-    "Опыт работы": "work_experience",
+    "Опыт работы -": "work_experience",
     "Образование": "education",
     "Повышение квалификации, курсы": "additional_education",
     "Ключевые навыки": "skill_set",
@@ -18,7 +18,7 @@ STOP_WORDS_MAPING = {
     "Дополнительная информация": "additional_info",
 }
 
-REGEX_FOR_END_PAGE = r'(\n|\s)Резюме обновлено\s.+'
+REGEX_FOR_END_PAGE = r"(\n|\s)Резюме обновлено\s.+"
 
 REGEX_FOR_GENDER = r"Мужчина|Женщина"
 REGEX_FOR_AGE = r"([0-9]+)\sлет"
@@ -73,11 +73,24 @@ REGEX_FOR_JOB_PERIOD = (
 
 LIST_WORK_EXPERIENCE_REGEX = [REGEX_FOR_TOTAL_EXPERIENCE]
 
-REGEX_FOR_LEVEL_EDUCATION = r"Среднее\sспециальное" \
-                            r"|Среднее\sпрофессиональное" \
-                            r"|Основное\sобщее" \
-                            r"|Среднее" \
-                            r"|Высшее|" \
-                            r"Cреднее\sобщее"
+REGEX_FOR_LEVEL_EDUCATION = (
+    r"Среднее\sспециальное"
+    r"|Среднее\sпрофессиональное"
+    r"|Основное\sобщее"
+    r"|Среднее"
+    r"|Высшее|"
+    r"Cреднее\sобщее"
+)
 REGEX_FOR_YEAR_EDUCATION = r"[0-9]{4}"
-REGEX_FOR_DESCRIPTION_EDUCATION = r"[0-9]{4}\s([А-я\s\-«»\"]+)(\,|\n)([А-я\s\,]+)"
+REGEX_FOR_DESCRIPTION_EDUCATION = r"[0-9]{4}\s([А-я\s\-«»\"\.]+)(\,|\n)([А-я\s\,\-]+)"
+
+REGEX_FOR_LANGUAGE_SKILL = r"Знание\sязыков\s([\s\d\D\W\w]+)Навыки"
+REGEX_FOR_SKILLS = r"Навыки([\s\d\D\W\w]+)"
+
+LIST_SKILL_SET_REGEX = [REGEX_FOR_LANGUAGE_SKILL, REGEX_FOR_SKILLS]
+
+
+REGEX_FOR_DRIVE_LICENSE_TYPES = r'Права\sкатегории\s([\sA-z,]+)'
+REGEX_FOR_DRIVE_VEHICLE = r'Имеется\sсобственный\sавтомобиль'
+
+REGEX_FOR_ADDITIONAL_INFO = r'Обо\sмне([\s\d\D\W\w]+)'
