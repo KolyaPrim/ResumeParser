@@ -1,7 +1,8 @@
 import os
 import re
+import argparse
+
 from pathlib import Path
-from pprint import pprint
 from typing import List, Dict, Tuple, Text
 
 from tools import Constants
@@ -9,7 +10,6 @@ from tools import ExternalTools as Et
 
 BASE_DIR = Path(__file__).resolve().parent
 
-REGEX_FOR_AGE = r'[0-9]+ лет'
 
 
 def get_list_year_education(text) -> Tuple[List, List]:
@@ -270,6 +270,12 @@ class ResumeParser:
         return json_data
 
 
-parser = ResumeParser(path="fastfile", save_path="results")
-parsed_json = parser.run()
-# pprint(parsed_json)
+if __name__ == '__main__':
+    parse_args = argparse.ArgumentParser()
+    parse_args.add_argument('-p', '--path', required=True, help='Path to file or folder. It is required')
+    parse_args.add_argument('-sp', '--save_path', help='Path where files wiil be saved. It is not required')
+
+    arguments = parse_args.parse_args()
+
+    parser = ResumeParser(path=arguments.path, save_path=arguments.save_path)
+    parser.run()

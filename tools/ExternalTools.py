@@ -11,12 +11,6 @@ from striprtf.striprtf import rtf_to_text
 REGEX_FOR_END_PAGE = r'(\n|\s)Резюме обновлено\s.+'
 
 
-# pip install docx2txt
-# pip install PyPDF2
-# pip install doc2docx
-# pip install striprtf
-
-
 def convert_doc2docx(path: str, path_save: str = None) -> None:
     """
     Method convert doc to docx.

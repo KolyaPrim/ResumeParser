@@ -82,15 +82,14 @@ REGEX_FOR_LEVEL_EDUCATION = (
     r"Cреднее\sобщее"
 )
 REGEX_FOR_YEAR_EDUCATION = r"[0-9]{4}"
-REGEX_FOR_DESCRIPTION_EDUCATION = r"[0-9]{4}\s([А-я\s\-«»\"\.]+)(\,|\n)([А-я\s\,\-]+)"
+REGEX_FOR_DESCRIPTION_EDUCATION = r"[0-9]{4}([А-я\s\-«»\"\.]+)(\,|\n)([А-я\s\,\-]+)"
 
 REGEX_FOR_LANGUAGE_SKILL = r"Знание\sязыков\s([\s\d\D\W\w]+)Навыки"
 REGEX_FOR_SKILLS = r"Навыки([\s\d\D\W\w]+)"
 
 LIST_SKILL_SET_REGEX = [REGEX_FOR_LANGUAGE_SKILL, REGEX_FOR_SKILLS]
 
+REGEX_FOR_DRIVE_LICENSE_TYPES = r"Права\sкатегории\s([\sA-z,]+)"
+REGEX_FOR_DRIVE_VEHICLE = r"Имеется\sсобственный\sавтомобиль"
 
-REGEX_FOR_DRIVE_LICENSE_TYPES = r'Права\sкатегории\s([\sA-z,]+)'
-REGEX_FOR_DRIVE_VEHICLE = r'Имеется\sсобственный\sавтомобиль'
-
-REGEX_FOR_ADDITIONAL_INFO = r'Обо\sмне([\s\d\D\W\w]+)'
+REGEX_FOR_ADDITIONAL_INFO = r"Обо\sмне([\s\d\D\W\w]+)"
