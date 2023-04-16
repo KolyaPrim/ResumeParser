@@ -1,0 +1,4 @@
+doc2docx==0.2.4
+docx2txt==0.8
+PyPDF2==3.0.1
+striprtf==0.0.22
