@@ -11,8 +11,12 @@ from tools import ExternalTools as Et
 BASE_DIR = Path(__file__).resolve().parent
 
 
-
 def get_list_year_education(text) -> Tuple[List, List]:
+    """
+    Function for slit text by year.
+    :param text: Text about education.
+    :return: Tuple of list with years and list with descriptions
+    """
     list_year = re.findall(Constants.REGEX_FOR_YEAR_EDUCATION, text)
     list_year = list(filter(None, list_year))
     list_year_index = [text.index(year) for year in list_year]
@@ -31,6 +35,22 @@ def get_list_year_education(text) -> Tuple[List, List]:
     return list_year, list_year_description
 
 
+def set_value_for_key_from_text(dict_obj: Dict, list_keys: List, text: str, regex_list: List) -> None:
+    """
+    Function for set key and value in dict.
+    :param dict_obj: Dict witch will be change.
+    :param list_keys: List for keys.
+    :param text: Text where well be search value.
+    :param regex_list: Regext list for apply to text for get value.
+    :return: None
+    """
+    for index, key in enumerate(list_keys):
+        try:
+            dict_obj[key] = re.findall(regex_list[index], text)[0]
+        except:
+            pass
+
+
 class ResumeParser:
     def __init__(self, path: str, save_path: str = None):
         """
@@ -42,6 +62,7 @@ class ResumeParser:
         self.save_path = save_path
 
     def run(self) -> Dict | List[Tuple[Text, Dict]]:
+        """ Method for start parse file or folder """
         if os.path.isdir(self.path):
             filename_list = Et.get_list_files(path=self.path)
             json_list = []
@@ -74,6 +95,11 @@ class ResumeParser:
 
     @staticmethod
     def _get_blocks(text: str) -> Dict:
+        """
+        Method for split text by main blocks.
+        :param text: Text from file
+        :return: Dict where key - name, value - text of block
+        """
         list_block_index: List = []
         for i in Constants.STOP_WORDS:
             if i in text:
@@ -85,7 +111,7 @@ class ResumeParser:
 
         for i in range(count_blocks):
             stop_word, index = list_block_index[i]
-            key = Constants.STOP_WORDS_MAPING.get(stop_word)
+            key = Constants.STOP_WORDS_MAPPING.get(stop_word)
             start_index = index + len(stop_word)
             if i == count_blocks - 1:
                 dict_with_text[key] = text[start_index:]
@@ -95,8 +121,53 @@ class ResumeParser:
 
         return dict_with_text
 
+    def _get_parsed_data(self, text: str) -> Dict:
+        """
+        Method for get block from text and parse it.
+        :param text: Text from file.
+        :return: Dict with parsed info from text.
+        """
+        block_text = self._get_blocks(text=text)
+
+        json_data = {}
+        for key, value in block_text.items():
+            json_data[key] = self._run_parse_text(field=key, text=value)
+
+        return json_data
+
+    def _run_parse_text(self, field, text) -> Dict:
+        """
+        Method for start parse text from block.
+        :param field: Name of block.
+        :param text: Text of block.
+        :return: Dict with information about current block.
+        """
+        text = text.strip()
+        match field:
+            case 'personal_info':
+                return self._get_personal_info(text=text)
+            case 'position_and_salary':
+                return self._get_position_and_salary(text=text)
+            case 'work_experience':
+                return self._get_work_experience(text=text)
+            case 'education':
+                return self._get_education(text=text)
+            case 'additional_education':
+                return self._get_additional_education(text=text)
+            case 'skill_set':
+                return self._get_skill_set(text=text)
+            case 'driver_experience':
+                return self._get_driver_experience(text=text)
+            case 'additional_info':
+                return self._get_additional_info(text=text)
+
     @staticmethod
     def _get_personal_info(text) -> Dict:
+        """
+        Method for get personal info from text.
+        :param text: Text from block.
+        :return: Dict with personal info.
+        """
         personal_info_dict = {}
 
         text_rows = [row for row in text.split('\n') if len(row) > 0]
@@ -105,43 +176,45 @@ class ResumeParser:
         personal_info_dict['name'] = name
 
         list_tag_name = ['last_name', 'first_name', 'middle_name']
-        list_keys = ['gender', 'age', 'birth_year', 'phone', 'mail', 'sity']
+        list_keys = ['gender', 'age', 'birth_year', 'phone', 'mail', 'city']
 
         for index, word in enumerate(name.split(' ')):
             personal_info_dict[list_tag_name[index]] = word
 
-        for index, key in enumerate(list_keys):
-            try:
-                personal_info_dict[key] = re.findall(Constants.LIST_PERSONAL_INFO_REGEX[index], text)[0]
-            except:
-                pass
+        set_value_for_key_from_text(dict_obj=personal_info_dict, text=text, list_keys=list_keys,
+                                    regex_list=Constants.LIST_PERSONAL_INFO_REGEX)
 
         return personal_info_dict
 
     @staticmethod
     def _get_position_and_salary(text) -> Dict:
+        """
+        Method for get info about prefer position and salary.
+        :param text: Text from block.
+        :return: Dict with info about position and salary.
+        """
 
         position_and_salary_dict = {}
 
         list_keys = ['title', 'salary', 'employments', 'schedules']
+        set_value_for_key_from_text(dict_obj=position_and_salary_dict, text=text, list_keys=list_keys,
+                                    regex_list=Constants.LIST_POSITION_AND_SALARY_REGEX)
 
-        for index, key in enumerate(list_keys):
-            try:
-                position_and_salary_dict[key] = re.findall(Constants.LIST_POSITION_AND_SALARY_REGEX[index], text)[0]
-            except:
-                pass
         return position_and_salary_dict
 
     @staticmethod
     def _get_work_experience(text) -> Dict:
+        """
+        Method for get work experience.
+        :param text: Text from block.
+        :return: Dict with info about work experience.
+        """
         work_experience_dict = {}
-        text
+
         list_keys = ['total_experience']
-        for index, key in enumerate(list_keys):
-            try:
-                work_experience_dict[key] = re.findall(Constants.LIST_WORK_EXPERIENCE_REGEX[index], text)[0]
-            except:
-                pass
+        set_value_for_key_from_text(dict_obj=work_experience_dict, text=text, list_keys=list_keys,
+                                    regex_list=Constants.LIST_WORK_EXPERIENCE_REGEX)
+
         text = re.sub(r'[——](.+)\n', '', text).strip()
 
         job_period_list = re.findall(Constants.REGEX_FOR_JOB_EXPERIENCE, text)
@@ -171,6 +244,11 @@ class ResumeParser:
 
     @staticmethod
     def _get_education(text) -> Dict:
+        """
+        Method for get education.
+        :param text: Text from block.
+        :return: Dict with info about education.
+        """
         education_dict = {}
 
         list_level_education = re.findall(Constants.REGEX_FOR_LEVEL_EDUCATION, text)
@@ -193,6 +271,11 @@ class ResumeParser:
 
     @staticmethod
     def _get_additional_education(text) -> Dict:
+        """
+        Method for get additional education.
+        :param text: Text from block.
+        :return: Dict with info about additional education.
+        """
         additional_education_dict = {}
 
         text = text.strip()
@@ -209,20 +292,26 @@ class ResumeParser:
 
     @staticmethod
     def _get_skill_set(text) -> Dict:
+        """
+        Method for get skill set.
+        :param text: Text from block
+        :return:  Dict with info about skill set.
+        """
         skill_set_dict = {}
 
         list_keys = ['language', 'skills']
-
-        for index, key in enumerate(list_keys):
-            try:
-                skill_set_dict[key] = re.findall(Constants.LIST_SKILL_SET_REGEX[index], text)[0]
-            except:
-                pass
+        set_value_for_key_from_text(dict_obj=skill_set_dict, text=text, list_keys=list_keys,
+                                    regex_list=Constants.LIST_SKILL_SET_REGEX)
 
         return skill_set_dict
 
     @staticmethod
     def _get_driver_experience(text) -> Dict:
+        """
+        Method for get driver experience.
+        :param text: Text from block
+        :return:  Dict with info about driver experience.
+        """
         driver_experience_dict = {}
 
         driver_license_types = re.findall(Constants.REGEX_FOR_DRIVE_LICENSE_TYPES, text)[0]
@@ -234,40 +323,16 @@ class ResumeParser:
 
     @staticmethod
     def _get_additional_info(text) -> Dict:
+        """
+        Method for get additional info.
+        :param text: Text from block
+        :return:  Dict with info about additional info.
+        """
         additional_info_dict = {
             'about': re.match(Constants.REGEX_FOR_ADDITIONAL_INFO, text).group(1).strip()
         }
 
         return additional_info_dict
-
-    def _run_parse_text(self, field, text) -> Dict:
-        text = text.strip()
-        match field:
-            case 'personal_info':
-                return self._get_personal_info(text=text)
-            case 'position_and_salary':
-                return self._get_position_and_salary(text=text)
-            case 'work_experience':
-                return self._get_work_experience(text=text)
-            case 'education':
-                return self._get_education(text=text)
-            case 'additional_education':
-                return self._get_additional_education(text=text)
-            case 'skill_set':
-                return self._get_skill_set(text=text)
-            case 'driver_experience':
-                return self._get_driver_experience(text=text)
-            case 'additional_info':
-                return self._get_additional_info(text=text)
-
-    def _get_parsed_data(self, text: str) -> Dict:
-        block_text = self._get_blocks(text=text)
-
-        json_data = {}
-        for key, value in block_text.items():
-            json_data[key] = self._run_parse_text(field=key, text=value)
-
-        return json_data
 
 
 if __name__ == '__main__':

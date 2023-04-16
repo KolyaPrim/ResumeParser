@@ -8,7 +8,7 @@ STOP_WORDS = [
     "Дополнительная информация",
 ]
 
-STOP_WORDS_MAPING = {
+STOP_WORDS_MAPPING = {
     "Желаемая должность и зарплата": "position_and_salary",
     "Опыт работы -": "work_experience",
     "Образование": "education",
@@ -25,7 +25,7 @@ REGEX_FOR_AGE = r"([0-9]+)\sлет"
 REGEX_FOR_BIRTH_YEAR = r"родил.+?\s.+([0-9]{4})"
 REGEX_FOR_PHONE = r"\+?[1-9]\s\([0-9]+\)\s[0-9]+"
 REGEX_FOR_MAIL = r"\+?[A-z0-9]+@[A-z]+\.[A-z]+"
-REGEX_FOR_SITY = r"Проживает:\s([А-я]+)"
+REGEX_FOR_CITY = r"Проживает:\s([А-я]+)"
 
 LIST_PERSONAL_INFO_REGEX = [
     REGEX_FOR_GENDER,
@@ -33,7 +33,7 @@ LIST_PERSONAL_INFO_REGEX = [
     REGEX_FOR_BIRTH_YEAR,
     REGEX_FOR_PHONE,
     REGEX_FOR_MAIL,
-    REGEX_FOR_SITY,
+    REGEX_FOR_CITY,
 ]
 
 REGEX_FOR_TITLE = r".+"
