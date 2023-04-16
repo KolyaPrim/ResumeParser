@@ -85,7 +85,7 @@ This module return a json object or list of json object that look like this:
     "driver_license_types": [
       "B"
     ],
-    "has_vehicle": True
+    "has_vehicle": true
   },
   "additional_info": {
     "about": "Всё время хочу пить кофе, есть и спать"
