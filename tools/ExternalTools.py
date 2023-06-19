@@ -2,7 +2,7 @@ import json
 import os
 import re
 from typing import List
-
+import sys
 import docx2txt
 from PyPDF2 import PdfReader
 from doc2docx import convert
@@ -18,7 +18,12 @@ def convert_doc2docx(path: str, path_save: str = None) -> None:
     :param path_save: Path to save.
     :return: None.
     """
-    convert(path, path_save)
+
+    if sys.platform in ("darwin", 'linux'):
+        bashCommand = f"lowriter --convert-to docx {path} --outdir {path_save}"
+        os.system(bashCommand)
+    elif sys.platform == "win32":
+        convert(path, path_save)
 
 
 def get_list_files(path: str) -> List[str]:
