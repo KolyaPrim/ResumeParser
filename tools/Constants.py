@@ -37,7 +37,7 @@ LIST_PERSONAL_INFO_REGEX = [
 ]
 
 REGEX_FOR_TITLE = r".+"
-REGEX_FOR_SALARY = r"([0-9]+\s[0-9]+)\sруб"
+REGEX_FOR_SALARY = r"([0-9]+\s[0-9]+)\s(?:руб|eur|usd)"
 REGEX_FOR_EMPLOYMENTS = r"Занятость:\s([А-я\s]+)\n"
 REGEX_FOR_SCHEDULES = r"График\sработы:\s([А-я\s]+)\n"
 
