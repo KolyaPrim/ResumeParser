@@ -1,6 +1,14 @@
 # ResumeParser
 
----
+### What do you need for use it?
+- Python >= 3.10
+
+- If you want to work with `.doc` files you should install the module `soffice` in Linux and Mac or `MS Office` (Word) in a Windows.
+    #### For Linux:
+        ```apt-get install libreoffice-common```
+    
+    #### For Mac
+        ```brew install --cask libreoffice```
 
 ### How to use it?
 
@@ -13,6 +21,8 @@ options:
   -p PATH, --path PATH                  Path to file or folder. It is required
   -sp SAVE_PATH, --save_path SAVE_PATH  Path where files wiil be saved. It is not required
 ```
+
+In a default SAVE_PATH = `'./saved_files'` 
 
 For example in Windows:
 
