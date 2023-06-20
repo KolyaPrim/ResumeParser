@@ -18,7 +18,6 @@ class ResumeParser:
         :param file: Path to folder or file.
         :param save_path:Path for save file.
         """
-        print(save_path)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         self.file = file
@@ -45,7 +44,6 @@ class ResumeParser:
         elif os.path.isfile(self.file):
             text = Et.get_text_from_file(file_path=self.file, path_save=self.save_path)
             json_data = self._get_parsed_data(text=text)
-            print(self.save_path)
             if self.save_path:
                 file_name = re.sub('\.[A-z0-9]+', '', self.file.split('/')[-1]) + '.json'
                 path = os.path.join(self.save_path, file_name)

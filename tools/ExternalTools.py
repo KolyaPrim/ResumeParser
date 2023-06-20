@@ -82,7 +82,7 @@ def save_json(path: str, json_data) -> None:
 def read_docx(file: str, path_save: str = None) -> str:
     """
     Method return a text from .doc or .docx
-    :param path: Path to file.
+    :param file: Path to file.
     :param path_save: Path to save file.
     :return: Text from docx file.
     """
@@ -122,7 +122,7 @@ def read_pdf(file: str) -> str:
 def read_rtf(file: str) -> str:
     """
     Method for read rtf.
-    :param file: Path to file.
+    :param file: Path to file
     :return Text from rtf.
     """
     with open(file, "r") as file:
