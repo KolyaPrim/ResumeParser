@@ -5,10 +5,10 @@
 
 - If you want to work with `.doc` files you should install the module `soffice` in Linux and Mac or `MS Office` (Word) in a Windows.
     #### For Linux:
-        ```apt-get install libreoffice-common```
+        apt-get install libreoffice-common
     
     #### For Mac
-        ```brew install --cask libreoffice```
+        brew install --cask libreoffice
 
 ### How to use it?
 
