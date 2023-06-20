@@ -12,23 +12,26 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 class ResumeParser:
-    def __init__(self, file: str, save_path: str = './'):
+    def __init__(self, file: str, save_path: str = './saved_files'):
         """
         Initial object ResumeParser.
-        :param path: Path to folder or file.
+        :param file: Path to folder or file.
         :param save_path:Path for save file.
         """
-        self.path = file
+        print(save_path)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        self.file = file
         self.save_path = save_path
 
     def run(self) -> Dict | List[Tuple[Text, Dict]]:
         """ Method for start parse file or folder """
-        if os.path.isdir(self.path):
-            filename_list = Et.get_list_files(path=self.path)
+        if os.path.isdir(self.file):
+            filename_list = Et.get_list_files(path=self.file)
             json_list = []
             for file in filename_list:
-                file_path = os.path.join(self.path, file)
-                text = Et.get_text_from_file(file_path=file_path)
+                file_path = os.path.join(self.file, file)
+                text = Et.get_text_from_file(file_path=file_path, path_save=self.save_path)
                 current_json = self._get_parsed_data(text=text)
                 json_list.append((file, current_json))
 
@@ -39,12 +42,12 @@ class ResumeParser:
                     Et.save_json(path=path, json_data=json_data)
             return json_list
 
-        elif os.path.isfile(self.path):
-            text = Et.get_text_from_file(file_path=self.path)
+        elif os.path.isfile(self.file):
+            text = Et.get_text_from_file(file_path=self.file, path_save=self.save_path)
             json_data = self._get_parsed_data(text=text)
             print(self.save_path)
             if self.save_path:
-                file_name = re.sub('\.[A-z0-9]+', '', self.path.split('/')[-1]) + '.json'
+                file_name = re.sub('\.[A-z0-9]+', '', self.file.split('/')[-1]) + '.json'
                 path = os.path.join(self.save_path, file_name)
                 Et.save_json(path=path, json_data=json_data)
 
@@ -54,7 +57,7 @@ class ResumeParser:
             raise Exception("It's not a file or folder path")
 
     @staticmethod
-    def _get_list_year_education(cls, text) -> Tuple[List, List]:
+    def _get_list_year_education(text) -> Tuple[List, List]:
         """
         Function for slit text by year.
         :param text: Text about education.
@@ -78,7 +81,7 @@ class ResumeParser:
         return list_year, list_year_description
 
     @staticmethod
-    def _set_value_for_key_from_text(cls, dict_obj: Dict, list_keys: List, text: str, regex_list: List) -> None:
+    def _set_value_for_key_from_text(dict_obj: Dict, list_keys: List, text: str, regex_list: List) -> None:
         """
         Function for set key and value in dict.
         :param dict_obj: Dict witch will be changed.
@@ -339,7 +342,7 @@ if __name__ == '__main__':
     parse_args = argparse.ArgumentParser()
     parse_args.add_argument('-f', '--file', required=True, help='Path to file or folder. It is required')
     parse_args.add_argument('-sp', '--save_path', help='Path where files wiil be saved. It is not required',
-                            default='.')
+                            default='./saved_files')
 
     arguments = parse_args.parse_args()
 
