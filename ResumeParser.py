@@ -94,7 +94,7 @@ class ResumeParser:
             try:
                 dict_obj[key] = re.findall(regex_list[index], text)[0]
             except:
-                pass
+                dict_obj[key] = None
 
     @staticmethod
     def _get_blocks(text: str) -> Dict:

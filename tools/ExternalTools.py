@@ -21,7 +21,6 @@ def convert_doc2docx(file: str, path_save: str = None) -> None:
     temp_dir = os.path.join(path_save, 'temp_files')
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
-
     if sys.platform in ("darwin", 'linux'):
         bash_command = f"soffice --convert-to docx {file} --outdir {temp_dir}"
         os.system(bash_command)
@@ -88,13 +87,18 @@ def read_docx(file: str, path_save: str = None) -> str:
     :return: Text from docx file.
     """
     if file.endswith(".doc"):
-        convert_doc2docx(file=file, path_save=path_save)
-
+        try:
+            convert_doc2docx(file=file, path_save=path_save)
+        except:
+            temp_dir = os.path.join(path_save, 'temp_files')
+            delete_folder(temp_dir)
+            raise Exception("Can't convert `.doc` to `.docx`. Please read a `README.md` ")
         file_name = os.path.basename(file)
         temp_dir = os.path.join(path_save, 'temp_files')
         path_to_file = os.path.join(temp_dir, file_name)
 
         docx_text = docx2txt.process(path_to_file + "x")
+
         delete_folder(temp_dir)
 
     else:
