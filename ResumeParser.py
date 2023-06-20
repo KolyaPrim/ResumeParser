@@ -11,64 +11,26 @@ from tools import ExternalTools as Et
 BASE_DIR = Path(__file__).resolve().parent
 
 
-def get_list_year_education(text) -> Tuple[List, List]:
-    """
-    Function for slit text by year.
-    :param text: Text about education.
-    :return: Tuple of list with years and list with descriptions
-    """
-    list_year = re.findall(Constants.REGEX_FOR_YEAR_EDUCATION, text)
-    list_year = list(filter(None, list_year))
-    list_year_index = [text.index(year) for year in list_year]
-    count_years = len(list_year_index)
-
-    list_year_description = []
-    for i in range(count_years):
-        start_index = list_year_index[i]
-        if i == count_years - 1:
-            list_year_description.append(text[start_index:])
-        else:
-            end_index = list_year_index[i + 1]
-            list_year_description.append(text[start_index:end_index])
-
-    list_year_description = list(filter(None, list_year_description))
-    return list_year, list_year_description
-
-
-def set_value_for_key_from_text(dict_obj: Dict, list_keys: List, text: str, regex_list: List) -> None:
-    """
-    Function for set key and value in dict.
-    :param dict_obj: Dict witch will be change.
-    :param list_keys: List for keys.
-    :param text: Text where well be search value.
-    :param regex_list: Regext list for apply to text for get value.
-    :return: None
-    """
-    for index, key in enumerate(list_keys):
-        try:
-            dict_obj[key] = re.findall(regex_list[index], text)[0]
-        except:
-            pass
-
-
 class ResumeParser:
-    def __init__(self, path: str, save_path: str = None):
+    def __init__(self, file: str, save_path: str = './saved_files'):
         """
         Initial object ResumeParser.
-        :param path: Path to folder or file.
+        :param file: Path to folder or file.
         :param save_path:Path for save file.
         """
-        self.path = path
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        self.file = file
         self.save_path = save_path
 
     def run(self) -> Dict | List[Tuple[Text, Dict]]:
         """ Method for start parse file or folder """
-        if os.path.isdir(self.path):
-            filename_list = Et.get_list_files(path=self.path)
+        if os.path.isdir(self.file):
+            filename_list = Et.get_list_files(path=self.file)
             json_list = []
             for file in filename_list:
-                file_path = os.path.join(self.path, file)
-                text = Et.get_text_from_file(file_path=file_path)
+                file_path = os.path.join(self.file, file)
+                text = Et.get_text_from_file(file_path=file_path, path_save=self.save_path)
                 current_json = self._get_parsed_data(text=text)
                 json_list.append((file, current_json))
 
@@ -79,12 +41,11 @@ class ResumeParser:
                     Et.save_json(path=path, json_data=json_data)
             return json_list
 
-        elif os.path.isfile(self.path):
-            text = Et.get_text_from_file(file_path=self.path)
+        elif os.path.isfile(self.file):
+            text = Et.get_text_from_file(file_path=self.file, path_save=self.save_path)
             json_data = self._get_parsed_data(text=text)
-
             if self.save_path:
-                file_name = re.sub('\.[A-z0-9]+', '', self.path.split('/')[-1]) + '.json'
+                file_name = re.sub('\.[A-z0-9]+', '', self.file.split('/')[-1]) + '.json'
                 path = os.path.join(self.save_path, file_name)
                 Et.save_json(path=path, json_data=json_data)
 
@@ -92,6 +53,46 @@ class ResumeParser:
 
         else:
             raise Exception("It's not a file or folder path")
+
+    @staticmethod
+    def _get_list_year_education(text) -> Tuple[List, List]:
+        """
+        Function for slit text by year.
+        :param text: Text about education.
+        :return: Tuple of list with years and list with descriptions
+        """
+        list_year = re.findall(Constants.REGEX_FOR_YEAR_EDUCATION, text)
+        list_year = list(filter(None, list_year))
+        list_year_index = [text.index(year) for year in list_year]
+        count_years = len(list_year_index)
+
+        list_year_description = []
+        for i in range(count_years):
+            start_index = list_year_index[i]
+            if i == count_years - 1:
+                list_year_description.append(text[start_index:])
+            else:
+                end_index = list_year_index[i + 1]
+                list_year_description.append(text[start_index:end_index])
+
+        list_year_description = list(filter(None, list_year_description))
+        return list_year, list_year_description
+
+    @staticmethod
+    def _set_value_for_key_from_text(dict_obj: Dict, list_keys: List, text: str, regex_list: List) -> None:
+        """
+        Function for set key and value in dict.
+        :param dict_obj: Dict witch will be changed.
+        :param list_keys: List for keys.
+        :param text: Text where well be search value.
+        :param regex_list: Regext list for apply to text for get value.
+        :return: None
+        """
+        for index, key in enumerate(list_keys):
+            try:
+                dict_obj[key] = re.findall(regex_list[index], text)[0]
+            except:
+                dict_obj[key] = None
 
     @staticmethod
     def _get_blocks(text: str) -> Dict:
@@ -161,8 +162,8 @@ class ResumeParser:
             case 'additional_info':
                 return self._get_additional_info(text=text)
 
-    @staticmethod
-    def _get_personal_info(text) -> Dict:
+    @classmethod
+    def _get_personal_info(cls, text) -> Dict:
         """
         Method for get personal info from text.
         :param text: Text from block.
@@ -181,13 +182,13 @@ class ResumeParser:
         for index, word in enumerate(name.split(' ')):
             personal_info_dict[list_tag_name[index]] = word
 
-        set_value_for_key_from_text(dict_obj=personal_info_dict, text=text, list_keys=list_keys,
-                                    regex_list=Constants.LIST_PERSONAL_INFO_REGEX)
+        cls._set_value_for_key_from_text(dict_obj=personal_info_dict, text=text, list_keys=list_keys,
+                                         regex_list=Constants.LIST_PERSONAL_INFO_REGEX)
 
         return personal_info_dict
 
-    @staticmethod
-    def _get_position_and_salary(text) -> Dict:
+    @classmethod
+    def _get_position_and_salary(cls, text) -> Dict:
         """
         Method for get info about prefer position and salary.
         :param text: Text from block.
@@ -197,13 +198,13 @@ class ResumeParser:
         position_and_salary_dict = {}
 
         list_keys = ['title', 'salary', 'employments', 'schedules']
-        set_value_for_key_from_text(dict_obj=position_and_salary_dict, text=text, list_keys=list_keys,
-                                    regex_list=Constants.LIST_POSITION_AND_SALARY_REGEX)
+        cls._set_value_for_key_from_text(dict_obj=position_and_salary_dict, text=text, list_keys=list_keys,
+                                         regex_list=Constants.LIST_POSITION_AND_SALARY_REGEX)
 
         return position_and_salary_dict
 
-    @staticmethod
-    def _get_work_experience(text) -> Dict:
+    @classmethod
+    def _get_work_experience(cls, text) -> Dict:
         """
         Method for get work experience.
         :param text: Text from block.
@@ -212,8 +213,8 @@ class ResumeParser:
         work_experience_dict = {}
 
         list_keys = ['total_experience']
-        set_value_for_key_from_text(dict_obj=work_experience_dict, text=text, list_keys=list_keys,
-                                    regex_list=Constants.LIST_WORK_EXPERIENCE_REGEX)
+        cls._set_value_for_key_from_text(dict_obj=work_experience_dict, text=text, list_keys=list_keys,
+                                         regex_list=Constants.LIST_WORK_EXPERIENCE_REGEX)
 
         text = re.sub(r'[——](.+)\n', '', text).strip()
 
@@ -242,8 +243,8 @@ class ResumeParser:
         work_experience_dict['job_experience'] = job_experience
         return work_experience_dict
 
-    @staticmethod
-    def _get_education(text) -> Dict:
+    @classmethod
+    def _get_education(cls, text) -> Dict:
         """
         Method for get education.
         :param text: Text from block.
@@ -258,7 +259,7 @@ class ResumeParser:
         for index, description in enumerate(list_education):
             description = description.strip()
 
-            list_year, list_year_description = get_list_year_education(text=description)
+            list_year, list_year_description = cls._get_list_year_education(text=description)
 
             education_dict[list_level_education[index]] = {}
             for index_year, description_year in enumerate(list_year_description):
@@ -269,8 +270,8 @@ class ResumeParser:
 
         return education_dict
 
-    @staticmethod
-    def _get_additional_education(text) -> Dict:
+    @classmethod
+    def _get_additional_education(cls, text) -> Dict:
         """
         Method for get additional education.
         :param text: Text from block.
@@ -280,7 +281,7 @@ class ResumeParser:
 
         text = text.strip()
 
-        list_year, list_year_description = get_list_year_education(text=text)
+        list_year, list_year_description = cls._get_list_year_education(text=text)
 
         for index_year, description_year in enumerate(list_year_description):
             additional_education_dict[list_year[index_year]] = {
@@ -290,8 +291,8 @@ class ResumeParser:
 
         return additional_education_dict
 
-    @staticmethod
-    def _get_skill_set(text) -> Dict:
+    @classmethod
+    def _get_skill_set(cls, text) -> Dict:
         """
         Method for get skill set.
         :param text: Text from block
@@ -300,8 +301,8 @@ class ResumeParser:
         skill_set_dict = {}
 
         list_keys = ['language', 'skills']
-        set_value_for_key_from_text(dict_obj=skill_set_dict, text=text, list_keys=list_keys,
-                                    regex_list=Constants.LIST_SKILL_SET_REGEX)
+        cls._set_value_for_key_from_text(dict_obj=skill_set_dict, text=text, list_keys=list_keys,
+                                         regex_list=Constants.LIST_SKILL_SET_REGEX)
 
         return skill_set_dict
 
@@ -337,10 +338,11 @@ class ResumeParser:
 
 if __name__ == '__main__':
     parse_args = argparse.ArgumentParser()
-    parse_args.add_argument('-p', '--path', required=True, help='Path to file or folder. It is required')
-    parse_args.add_argument('-sp', '--save_path', help='Path where files wiil be saved. It is not required')
+    parse_args.add_argument('-f', '--file', required=True, help='Path to file or folder. It is required')
+    parse_args.add_argument('-sp', '--save_path', help='Path where files wiil be saved. It is not required',
+                            default='./saved_files')
 
     arguments = parse_args.parse_args()
 
-    parser = ResumeParser(path=arguments.path, save_path=arguments.save_path)
+    parser = ResumeParser(file=arguments.file, save_path=arguments.save_path)
     parser.run()
